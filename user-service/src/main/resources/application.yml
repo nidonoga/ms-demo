@@ -1,0 +1,40 @@
+server:
+  port: 8100
+spring:
+  application:
+    name: user-service
+  datasource:
+    url: jdbc:mysql://localhost:3308/ms-database-user?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&enabledTLSProtocols=TLSv1.2
+    username: admin
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    default-property-inclusion: NON_NULL
+    serialization:
+      fail-on-empty-beans: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer:  org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin # Usuário padrão do RabbitMQ
+    password: admin # Senha padrão do RabbitMQ
+    virtual-host: / # Virtual host padrão
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+      
+broker.kafka.topic.email.name: ms-email-kafka
+broker.queue.email.name: default.email

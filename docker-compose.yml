@@ -1,0 +1,139 @@
+services:
+    
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"      # Porta do RabbitMQ para comunicação (AMQP)
+      - "15672:15672"    # Porta para a interface de gerenciamento
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - microservices
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - "2181:2181"
+    networks:
+      - microservices
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    restart: on-failure
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    expose:
+      - 9092
+    networks:
+      - microservices
+
+  database-user:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: database-user
+    environment:
+      TZ: America/Sao_Paulo
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_DATABASE: ms-database-user
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_TCP_PORT: 3308
+    ports:
+      - "3308:3308"
+    expose:
+     - 3308
+    networks:
+      - microservices
+      
+  naming-server:
+    image: naming-server:0.0.1-SNAPSHOT
+    container_name: naming-server
+    ports:
+      - 8761:8761
+    networks:
+      - microservices
+      
+  api-gateway:
+    image: api-gateway:0.0.1-SNAPSHOT
+    container_name: api-gateway
+    ports:
+      - 8765:8765
+    depends_on:
+      - naming-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+    networks:
+      - microservices
+
+  user-service:
+    image: user-service:0.0.1-SNAPSHOT
+    restart: always
+    container_name: user-service
+    environment:
+      TZ: America/Sao_Paulo
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.DATASOURCE.URL: jdbc:mysql://database-user:3308/ms-database-user?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&enabledTLSProtocols=TLSv1.2
+      SPRING.DATASOURCE.DRIVERCLASSNAME: com.mysql.cj.jdbc.Driver
+      SPRING.DATASOURCE.USERNAME: admin
+      SPRING.DATASOURCE.PASSWORD: admin
+      SPRING.KAFKA.BOOTSTRAPSERVERS: kafka:9092
+      SPRING.RABBITMQ.HOST: rabbitmq
+      SPRING.RABBITMQ.PORT: 5672
+      SPRING.RABBITMQ.USERNAME: admin
+      SPRING.RABBITMQ.PASSWORD: admin
+      SPRING.RABBITMQ.VIRTUALHOST: /
+    ports:
+      - 8100
+    depends_on:
+      - naming-server
+      - database-user
+      - rabbitmq
+      - zookeeper
+      - kafka
+      - api-gateway
+    networks:
+      - microservices
+      
+  email-service:
+    image: email-service:0.0.1-SNAPSHOT
+    restart: on-failure
+    container_name: email-service
+    environment:
+      TZ: America/Sao_Paulo
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.RABBITMQ.HOST: rabbitmq
+      SPRING.RABBITMQ.PORT: 5672
+      SPRING.RABBITMQ.USERNAME: admin
+      SPRING.RABBITMQ.PASSWORD: admin
+      SPRING.RABBITMQ.VIRTUALHOST: /
+      SPRING.KAFKA.BOOTSTRAP-SERVERS: kafka:9092
+    ports:
+      -  8200:8200
+    depends_on:
+      - naming-server
+      - rabbitmq
+      - zookeeper
+      - kafka
+      - api-gateway
+    networks:
+      - microservices
+      
+networks:
+  microservices:
+    driver: bridge

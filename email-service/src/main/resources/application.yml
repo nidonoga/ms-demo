@@ -1,0 +1,47 @@
+server:
+  port: 8200
+
+spring:
+  application:
+    name: email-service
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: email@email.com     # Sender's email
+    password: ---- ---- ---- ---- # Add app password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: ms-email-kafka-group-id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+    listener:
+      simple:
+        concurrency: 5          # Número mínimo de consumidores
+        max-concurrency: 10     # Número máximo de consumidores
+        prefetch: 1             # Número de mensagens por vez por consumidor
+    template:
+      mandatory: true           # Para garantir que mensagens não roteáveis sejam devolvidas
+      reply-timeout: 5000       # Timeout de resposta em milissegundos
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+broker.queue.email.name: default.email
