@@ -19,8 +19,8 @@ jobs:
 
       - name: Docker Hub Push naming-server
         run: |
-          docker tag naming-server:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/naming-server:${{ github.run_id }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/naming-server:${{ github.run_id }}
+          docker tag naming-server:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/naming-server:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/naming-server:latest
           
       - name: Docker Image Build api-gateway
         working-directory: ./api-gateway
@@ -28,8 +28,8 @@ jobs:
       
       - name: Docker Hub Push api-gateway
         run: |
-          docker tag api-gateway:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.run_id }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.run_id }}
+          docker tag api-gateway:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
 
       - name: Docker Image Build email-service
         working-directory: ./email-service
@@ -37,8 +37,8 @@ jobs:
       
       - name: Docker Hub Push email-service 
         run: |
-          docker tag email-service:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/email-service:${{ github.run_id }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/email-service:${{ github.run_id }}
+          docker tag email-service:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/email-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/email-service:latest
 
       - name: Docker Image Build user-service
         working-directory: ./user-service
@@ -46,8 +46,8 @@ jobs:
       
       - name: Docker Hub Push user-service
         run: |
-          docker tag user-service:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.run_id }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.run_id }}
+          docker tag user-service:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/user-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:latest
           
           
         
