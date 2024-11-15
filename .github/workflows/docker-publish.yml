@@ -17,7 +17,7 @@ jobs:
         working-directory: ./naming-server
         run: docker build -t naming-server:0.0.1-SNAPSHOT .
 
-      - name: Push Image naming-server Docker Hub
+      - name: Docker Hub Push naming-server
         run: |
           docker tag naming-server:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/naming-server:${{ github.run_id }}
           docker push ${{ secrets.DOCKER_USERNAME }}/naming-server:${{ github.run_id }}
@@ -26,9 +26,28 @@ jobs:
         working-directory: ./api-gateway
         run: docker build -t api-gateway:0.0.1-SNAPSHOT .
       
-      - name: Push Image api-gateway Docker Hub
+      - name: Docker Hub Push api-gateway
         run: |
           docker tag api-gateway:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.run_id }}
           docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.run_id }}
+
+      - name: Docker Image Build email-service
+        working-directory: ./email-service
+        run: docker build -t email-service:0.0.1-SNAPSHOT .
+      
+      - name: Docker Hub Push email-service 
+        run: |
+          docker tag email-service:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/email-service:${{ github.run_id }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/email-service:${{ github.run_id }}
+
+      - name: Docker Image Build user-service
+        working-directory: ./user-service
+        run: docker build -t user-service:0.0.1-SNAPSHOT .
+      
+      - name: Docker Hub Push user-service
+        run: |
+          docker tag user-service:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.run_id }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.run_id }}
+          
           
         
