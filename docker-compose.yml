@@ -62,7 +62,7 @@ services:
       - microservices
       
   naming-server:
-    image: nido88/naming-server:0.0.1-SNAPSHOT
+    image: nido88/naming-server:latest
     container_name: naming-server
     ports:
       - 8761:8761
@@ -70,7 +70,7 @@ services:
       - microservices
       
   api-gateway:
-    image: nido88/api-gateway:0.0.1-SNAPSHOT
+    image: nido88/api-gateway:latest
     container_name: api-gateway
     ports:
       - 8765:8765
@@ -82,7 +82,7 @@ services:
       - microservices
 
   user-service:
-    image: nido88/user-service:0.0.1-SNAPSHOT
+    image: nido88/user-service:latest
     restart: always
     container_name: user-service
     environment:
@@ -111,7 +111,7 @@ services:
       - microservices
       
   email-service:
-    image: nido88/email-service:0.0.1-SNAPSHOT
+    image: nido88/email-service:latest
     restart: on-failure
     container_name: email-service
     environment:
