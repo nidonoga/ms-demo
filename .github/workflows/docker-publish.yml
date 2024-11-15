@@ -22,4 +22,13 @@ jobs:
           docker tag naming-server:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/naming-server:${{ github.run_id }}
           docker push ${{ secrets.DOCKER_USERNAME }}/naming-server:${{ github.run_id }}
           
+      - name: Docker Image Build api-gateway
+        working-directory: ./api-gateway
+        run: docker build -t api-gateway:0.0.1-SNAPSHOT .
+      
+      - name: Push Image api-gateway Docker Hub
+        run: |
+          docker tag api-gateway:0.0.1-SNAPSHOT ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.run_id }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.run_id }}
+          
         
