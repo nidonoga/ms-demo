@@ -44,7 +44,7 @@ Esta aplicação utiliza uma base de dados MySql e também servidores de mensage
 
 - Instale o Docker Desktop: 
     ```
-    https://www.docker.com/products/docker-desktop/
+    https://www.docker.com/
     ```
 - No diretório onde está localizado o arquivo docker-compose abrir um terminal e executar o seguinte comando:
     ```
